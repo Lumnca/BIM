@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    html,
+    body {
+        overflow: hidden;
+    }
+
+    #three-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        outline: none;
+    }
+
+    #file-input {
+        z-index: 1;
+        position: absolute;
+    }
+    div{
+        padding: 8px 16px;
+    }
+</style>
+
+<body>
+    <div id="tag">ID:None</div>
+    <canvas id="three-canvas"></canvas>
+    <script src="./dist/bundle6.js"></script>
+</body>
+
+</html>

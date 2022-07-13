@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="assets/index.css">
+    <script src="assets/vue.js"></script>
+    <!-- import JavaScript -->
+    <script src="assets/index.js"></script>
+    <script src="assets/axios.min.js"></script>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    html,
+    body {
+        overflow: hidden;
+    }
+
+    #three-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        outline: none;
+    }
+
+
+
+    #ui {
+        position: absolute;
+        z-index: 1;
+        padding: 16px;
+        top: 16px;
+    }
+    form {
+        position: absolute;
+        z-index: 2;
+     
+    }
+</style>
+
+<body>
+    <form action="https://localhost:7215/api/Values" method="post" enctype="multipart/form-data">
+        <input type="file" name="files" id="file-input" multiple />
+        <input type="submit" id="sumbit" value="提交">
+    </form>
+    <div id="ui">
+        文件大小 : {{fileSize/1000}} KB
+        <br />
+        类型列表：
+        <br/>
+        <div>
+            <el-checkbox-group v-model="checkList">
+                <div v-for="item in modelList">
+                    <el-checkbox :label="item" @change="modelChange(item)"></el-checkbox>
+                </div>
+            </el-checkbox-group>
+            <button v-if="checkList.length>0" @click="startExec()">开始执行选中拆分</button>
+            <button v-if="checkList.length>0" @click="autoExec()">自动按照类型拆分</button>
+        </div>
+        <br>
+        拆分列表 <span  v-if="loading">正在处理中<span v-if="loadingText">{{loadingText}}</span> <i class="el-icon-loading"></i></span>
+        <div v-for="file in files">
+             {{file.fileName}} ({{Math.floor(file.size/1000)}}K)
+        </div>
+        <a href="./index9.html">加载界面</a>
+    </div>
+    <canvas id="three-canvas"></canvas>
+    <script src="./dist/bundle8.js"></script>
+    <script>
+   
+    </script>
+</body>
+
+</html>

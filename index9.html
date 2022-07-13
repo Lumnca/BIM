@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="assets/index.css">
+    <script src="assets/vue.js"></script>
+    <!-- import JavaScript -->
+    <script src="assets/index.js"></script>
+    <script src="assets/axios.min.js"></script>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    html,
+    body {
+        overflow: hidden;
+    }
+
+    #three-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        outline: none;
+    }
+
+    #ui {
+        z-index: 1;
+        position: absolute;
+    }
+    #menu{
+        position:absolute;
+        bottom: 0;
+        left: 0;
+        z-index: 2;
+    }
+    #sprite{
+        padding: 4px;
+        background-color: #2c2c2c;
+        color: aliceblue;
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        border-radius: 4px;
+        visibility: hidden;
+        z-index: 9;
+    }
+</style>
+
+<body>
+    <div id="ui" style="padding: 8px;">
+        <div v-if="!onload">
+            <input type="text" placeholder="文件名" v-model="fileName">
+            <br />
+            <input type="number" placeholder="文件个数" v-model="length">
+            <br />
+            <input type="number" placeholder="模型放大倍数" v-model="scale">
+            <br />
+            <button @click="start()">访问</button>
+        </div>
+        <div v-else>
+            <button @click="addLJ()">加一个零件</button>
+            <button @click="check = !check">{{check?'关闭':'显示'}}Label</button>
+            <button @click="addLine()">{{canAddLine?'关闭连线':'开启连线'}}</button>
+            <button @click="tragCheck()">拖拽</button>
+        </div>
+        <div style="padding: 8px;">
+            零件列表:<br/>
+            <div v-for="lj,i in LJs">
+                {{lj.name}} <button @click="delLJ(lj,i)">删除</button>
+               
+            </div>
+            <br/>
+            连线列表:<br/>
+            <div v-for="l,i in lines">
+               线条 {{i+1}} <button @click="delLine(l,i)">删除</button>
+               
+            </div>
+        </div>
+    </div>
+    <div id="sprite">
+        设备ID:777
+    </div>
+    <canvas id="three-canvas"></canvas>
+    <script src="./dist/bundle9.js"></script>
+</body>
+
+</html>
