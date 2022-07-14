@@ -10,7 +10,7 @@ import {
 import {
     OrbitControls
 } from "three/examples/jsm/controls/OrbitControls";
-
+import pako from 'pako';
 // 创建Three.js场景
 const scene = new Scene();
 
@@ -122,12 +122,21 @@ const categories = {
 };
 // 设置IFC加载
 const ifcLoader = new IFCLoader();
+var gzipData;
 
 const input = document.getElementById("file-input");
 input.addEventListener(
     "change",
     (changed) => {
         const file = changed.target.files[0];
+        var fileReader = new FileReader();   
+        fileReader.onload = ()=>{
+           // console.log(fileReader.result)
+            gzipData = pako.gzip(fileReader.result)
+            window.gzipData = pako.inflate(gzipData);
+
+        }
+        fileReader.readAsArrayBuffer(file);
         UI.$data.fileName = file.name.split(".")[0];
         UI.$data.fileSize = file.size;
         var ifcURL = URL.createObjectURL(file);
@@ -233,10 +242,22 @@ const UI = new Vue({
             dealing: false,
             loading: false,
             fileSize: 0,
-            loadingText : ''
+            loadingText : '',
+            res : {},
+            posting : false
         }
     },
     methods: {
+        postFile(){
+            this.posting = true;
+            let data = new FormData();
+            data.append('files',new File([gzipData],"test.gzip"));
+            axios.post('https://localhost:7215/api/Values',data).then((res)=>{
+                this.posting = false;
+                console.log(res);
+                this.res = res;
+            });
+        },
         modelChange(v) {
             if (states[v]) models[v].removeFromParent();
             else scene.add(models[v]);

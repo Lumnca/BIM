@@ -36,10 +36,10 @@
     #ui {
         position: absolute;
         z-index: 1;
-        padding: 16px;
-        top: 16px;
+        padding: 4px;
+        top: 20px;
     }
-    form {
+    #from{
         position: absolute;
         z-index: 2;
      
@@ -47,12 +47,14 @@
 </style>
 
 <body>
-    <form action="https://localhost:7215/api/Values" method="post" enctype="multipart/form-data">
-        <input type="file" name="files" id="file-input" multiple />
-        <input type="submit" id="sumbit" value="提交">
-    </form>
+    <div id="from">
+        <input type="file" name="files" id="file-input" />
+    </div>
     <div id="ui">
-        文件大小 : {{fileSize/1000}} KB
+    
+        文件大小 : {{fileSize/1000}} KB    <button @click="postFile()">提交</button>
+        <div v-if="posting"><i class="el-icon-loading"></i></div>
+        <div v-if="res.data">上传成功！ 压缩大小:{{res.data.size/1000}} KB</div>
         <br />
         类型列表：
         <br/>

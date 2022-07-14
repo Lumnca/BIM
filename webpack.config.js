@@ -1,10 +1,10 @@
 const path = require('path');
 
 module.exports = {
-  entry: './src/bundle9.js',
+  entry: './src/bundle8.js',
   output: {
       path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle9.js'
+    filename: 'bundle8.js'
   },
   mode: 'development'
 };

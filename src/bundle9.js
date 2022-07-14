@@ -80,9 +80,7 @@ const animate = () => {
     if (tween) tween.update();
     renderer.render(scene, camera);
     if(lineMove){
-        if(UI.lines.length>0){
-            lineUpdate(UI.lines[0],UI.LJs[0],UI.LJs[1]);
-        }
+        updateLine();
     }
     requestAnimationFrame(animate);
 };
@@ -92,6 +90,26 @@ animate();
 const raycaster = new Raycaster();
 raycaster.firstHitOnly = true;
 const mouse = new Vector2();
+
+
+//更新线条
+function updateLine(){
+    if(UI.lines.length>0){
+        let lines = JSON.parse(localStorage.getItem('_lines'+UI.fileName));
+        lines.forEach((l,i) => {
+            lineUpdate(UI.lines[i],UI.LJs[l[0]],UI.LJs[l[1]]);
+        });
+    }
+}
+//初始化存在线条
+function initLine(){
+    let lines = JSON.parse(localStorage.getItem('_lines'+UI.fileName));
+    lines.forEach((l,i) => {
+       let line = createLine(UI.LJs[l[0]].position,UI.LJs[l[1]].position);
+       scene.add(line);
+       UI.lines.push(line);
+    });
+}
 
 function cast(event) {
     // 计算鼠标在屏幕上的位置
@@ -163,6 +181,7 @@ function pick(event) {
         tween = animateCamera(camera.position, controls.target, n, p, tween, camera, controls);
     }
 }
+var lineIndexs = [];
 //单机事件
 function click(event) {
     if (UI.canAddLj) {
@@ -187,7 +206,6 @@ function click(event) {
                 }
                 scene.add(UI.stl)
                 UI.canAddLj = false;
-
                 UI.saveLJ();
             }
         }
@@ -196,12 +214,17 @@ function click(event) {
         const found = castModel(event, UI.LJs)[0];
         if (found) {
             UI.linePoints.push(found.object.position);
+            lineIndexs.push(UI.LJs.indexOf(found.object));
+            //连线
             if (UI.linePoints.length === 2) {
                 let line = createLine(UI.linePoints[0],UI.linePoints[1]);
                 scene.add(line);
                 UI.lines.push(line);
+                
+                UI.dirs.push(lineIndexs);
                 UI.linePoints = [];
-                //UI.saveLine();
+                lineIndexs = [];
+                UI.saveLine();
             }
             console.log("add");
         }
@@ -298,7 +321,8 @@ const UI = new Vue({
             canAddLine: false,
             lines: [],
             tragcontrols: null,
-            move : false
+            move : false,
+            dirs : []
         }
     },
     methods: {
@@ -314,7 +338,7 @@ const UI = new Vue({
             save('_ljs' + this.fileName, data);
         },
         saveLine() {
-            save('_lines' + this.fileName, this.lines);
+            save('_lines' + this.fileName, this.dirs);
         },
         start(v) {
             /*axios.post('https://localhost:7215/api/Ifc', data).then(res => {
@@ -342,8 +366,12 @@ const UI = new Vue({
                         mesh.name = e.name;
                         mesh.lookAt(new Vector3(e.face.x, e.face.y, e.face.z));
                         mesh.rotateX(Math.PI / 2);
+                        mesh.cpoy = e;
                         scene.add(mesh);
                         this.LJs.push(mesh);
+                        if(this.LJs.length>=data.length){
+                            initLine();
+                        }
                     })
                 });
             }
@@ -390,7 +418,8 @@ const UI = new Vue({
         delLine(line, i) {
             scene.remove(line);
             if (this.lines.splice(i, 1)) {
-                //this.saveLJ();
+                this.dirs.splice(i,1);
+                this.saveLine();
             }
         },
         startCheck() {
